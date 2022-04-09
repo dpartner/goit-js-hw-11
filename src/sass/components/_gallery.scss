@@ -1,0 +1,37 @@
+.container__gallery {
+  padding-top: 30px;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
+  margin: -15px;
+}
+
+.photo-card {
+  flex-basis: calc((100% - 120px) / 4);
+  overflow: hidden;
+  margin: 15px;
+  border: 1px solid #ffd0006a;
+  border-radius: 0 0 15px 15px;
+  -webkit-box-shadow: 0px 0px 10px -1px rgba(255, 209, 0, 0.51);
+  box-shadow: 0px 0px 10px -1px rgba(255, 209, 0, 0.51);
+}
+
+.gallery__img {
+  width: 100%;
+}
+
+.info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.info-item {
+  color: var(--primary-color);
+  &:not(:last-child) {
+    margin-right: 10px;
+  }
+}
