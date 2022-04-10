@@ -12,6 +12,7 @@ const ref = {
 };
 let page = 1;
 let value = null;
+const per_page = 40;
 
 ref.form.addEventListener('submit', onSearch);
 ref.load.addEventListener('click', onLoad);
@@ -20,7 +21,8 @@ ref.load.addEventListener('click', onLoad);
 async function onSearch(e) {
   e.preventDefault();
   value = e.currentTarget.searchQuery.value;
-  const res = await await getPhoto(value);
+  page = 1;
+  const res = await await getPhoto(value, page, per_page);
   const picturesArr = res.data.hits;
   const totalHits = res.data.totalHits;
 
@@ -35,7 +37,6 @@ async function onSearch(e) {
   const allMarkup = picturesArr.map(createMarkup).join('');
 
   ref.gallery.innerHTML = '';
-  page = 1;
   ref.gallery.insertAdjacentHTML('beforeend', allMarkup);
   const lightbox = new SimpleLightbox('.gallery a', {
     captionsData: 'alt',
@@ -45,7 +46,7 @@ async function onSearch(e) {
 
 async function onLoad() {
   page += 1;
-  const res = await getPhoto(value, page);
+  const res = await getPhoto(value, page, per_page);
   const picturesArr = res.data.hits;
   const sumPages = page * 40;
 
@@ -56,6 +57,11 @@ async function onLoad() {
   const allMarkup = picturesArr.map(createMarkup).join('');
 
   ref.gallery.insertAdjacentHTML('beforeend', allMarkup);
+  topScroll();
+  const lightbox = new SimpleLightbox('.gallery a', {
+    captionsData: 'alt',
+    captionDelay: 250,
+  });
 }
 
 function createMarkup(photo) {
@@ -66,7 +72,7 @@ function createMarkup(photo) {
   const views = photo.views;
   const comments = photo.comments;
   const downloads = photo.downloads;
-  const cartMarkup = `<div class="photo-card">
+  const cartMarkup = `<li class="photo-card">
           <a class='gallery__link' href="${largeImageURL}">
             <img class="gallery__img" src="${webFormatURL}" alt="${tags}" loading="lazy" />
             </a>
@@ -79,6 +85,17 @@ function createMarkup(photo) {
               <p class="info-item"><b>Comments</b><span class="info-item__value">${comments}</span></p>
               <p class="info-item"><b>Downloads</b><span class="info-item__value">${downloads}</span></p>
             </div>
-          </div>`;
+          </li>`;
   return cartMarkup;
+}
+
+function topScroll() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
