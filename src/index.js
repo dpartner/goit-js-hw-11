@@ -3,20 +3,22 @@ import getPhoto from './js/getPhoto';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import throttle from 'lodash.throttle';
 
 const ref = {
   form: document.querySelector('.search-form'),
   gallery: document.querySelector('.gallery'),
   load: document.querySelector('.load-more'),
   cardLink: document.querySelector('.gallery__link'),
+  body: document.querySelector('body'),
 };
 let page = 1;
 let value = null;
 const per_page = 40;
 
 ref.form.addEventListener('submit', onSearch);
-ref.load.addEventListener('click', onLoad);
-// ref.cardLink.addEventListener('click', onSimpleLightBox);
+// ref.load.addEventListener('click', onLoad);
+window.addEventListener('scroll', throttle(onInfinityScroll, 500));
 
 async function onSearch(e) {
   e.preventDefault();
@@ -53,11 +55,12 @@ async function onLoad() {
   if (res.data.totalHits <= sumPages) {
     Notify.failure("We're sorry, but you've reached the end of search results.");
     ref.load.classList.add('visually-hidden');
+    return;
   }
   const allMarkup = picturesArr.map(createMarkup).join('');
 
   ref.gallery.insertAdjacentHTML('beforeend', allMarkup);
-  topScroll();
+  lazyScroll();
   const lightbox = new SimpleLightbox('.gallery a', {
     captionsData: 'alt',
     captionDelay: 250,
@@ -89,7 +92,7 @@ function createMarkup(photo) {
   return cartMarkup;
 }
 
-function topScroll() {
+function lazyScroll() {
   const { height: cardHeight } = document
     .querySelector('.gallery')
     .firstElementChild.getBoundingClientRect();
@@ -98,4 +101,13 @@ function topScroll() {
     top: cardHeight * 2,
     behavior: 'smooth',
   });
+}
+
+function onInfinityScroll() {
+  const documentRect = ref.body.getBoundingClientRect();
+  console.log(documentRect);
+  if (documentRect.bottom < document.documentElement.clientHeight + 20) {
+    console.log('load');
+    onLoad();
+  }
 }
