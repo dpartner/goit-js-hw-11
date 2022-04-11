@@ -28,7 +28,7 @@
 
 .form-wrap {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   align-items: center;
   height: 60px;
 
@@ -73,6 +73,7 @@
   transform: translateY(-50%);
   width: 40px;
   height: 40px;
+  padding: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
