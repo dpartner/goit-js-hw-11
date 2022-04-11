@@ -8,12 +8,22 @@
   position: relative;
 }
 
-.ukraine-flag {
+.ukraine {
   position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   top: 50%;
   left: 0;
   margin-left: 30px;
   transform: translateY(-50%);
+}
+.ukraine-flag {
+  margin-right: 10px;
+}
+
+.ukraine-gaslo {
+  color: var(--secondary-color);
 }
 
 .form-wrap {
@@ -33,7 +43,7 @@
 
 .search-form__input {
   height: 40px;
-  width: 100%;
+  width: 50vw;
   border-radius: 10px;
   border: 2px solid var(--primary-color);
   color: #0082d1;
@@ -46,6 +56,10 @@
   }
   &::placeholder {
     color: var(--secondary-color);
+  }
+
+  @media screen and (min-width: 480px) {
+    width: 100%;
   }
 
   @media screen and (min-width: 768px) {
