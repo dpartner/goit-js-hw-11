@@ -1,6 +1,7 @@
 .section__input {
   background-color: var(--primary-color);
   position: fixed;
+  z-index: 999;
 }
 
 .container__input {

@@ -9,24 +9,27 @@ const ref = {
   form: document.querySelector('.search-form'),
   gallery: document.querySelector('.gallery'),
   load: document.querySelector('.load-more'),
-  cardLink: document.querySelector('.gallery__link'),
   body: document.querySelector('body'),
 };
 let page = 1;
 let value = null;
 const per_page = 40;
+const throttleScroll = throttle(onInfinityScroll, 500);
 
 ref.form.addEventListener('submit', onSearch);
 // ref.load.addEventListener('click', onLoad);
-window.addEventListener('scroll', throttle(onInfinityScroll, 500));
+window.addEventListener('scroll', throttleScroll);
 
 async function onSearch(e) {
   e.preventDefault();
+  ref.gallery.innerHTML = '';
+
   value = e.currentTarget.searchQuery.value;
   page = 1;
   const res = await await getPhoto(value, page, per_page);
   const picturesArr = res.data.hits;
   const totalHits = res.data.totalHits;
+  window.addEventListener('scroll', throttleScroll);
 
   if (picturesArr.length > 0) {
     ref.load.classList.remove('visually-hidden');
@@ -36,35 +39,23 @@ async function onSearch(e) {
     Notify.failure('"Sorry, there are no images matching your search query. Please try again."');
   }
 
-  const allMarkup = picturesArr.map(createMarkup).join('');
-
-  ref.gallery.innerHTML = '';
-  ref.gallery.insertAdjacentHTML('beforeend', allMarkup);
-  const lightbox = new SimpleLightbox('.gallery a', {
-    captionsData: 'alt',
-    captionDelay: 250,
-  });
+  addMarkup(picturesArr);
 }
 
 async function onLoad() {
   page += 1;
   const res = await getPhoto(value, page, per_page);
   const picturesArr = res.data.hits;
-  const sumPages = page * 40;
+  const sumPages = page * per_page;
 
   if (res.data.totalHits <= sumPages) {
     Notify.failure("We're sorry, but you've reached the end of search results.");
     ref.load.classList.add('visually-hidden');
+    window.removeEventListener('scroll', throttleScroll);
     return;
   }
-  const allMarkup = picturesArr.map(createMarkup).join('');
-
-  ref.gallery.insertAdjacentHTML('beforeend', allMarkup);
+  addMarkup(picturesArr);
   lazyScroll();
-  const lightbox = new SimpleLightbox('.gallery a', {
-    captionsData: 'alt',
-    captionDelay: 250,
-  });
 }
 
 function createMarkup(photo) {
@@ -92,6 +83,17 @@ function createMarkup(photo) {
   return cartMarkup;
 }
 
+function addMarkup(pictures) {
+  const allMarkup = pictures.map(createMarkup).join('');
+
+  ref.gallery.insertAdjacentHTML('beforeend', allMarkup);
+
+  const lightbox = new SimpleLightbox('.gallery a', {
+    captionsData: 'alt',
+    captionDelay: 250,
+  });
+}
+
 function lazyScroll() {
   const { height: cardHeight } = document
     .querySelector('.gallery')
@@ -103,11 +105,9 @@ function lazyScroll() {
   });
 }
 
-function onInfinityScroll() {
+function onInfinityScroll(e) {
   const documentRect = ref.body.getBoundingClientRect();
-  console.log(documentRect);
   if (documentRect.bottom < document.documentElement.clientHeight + 20) {
-    console.log('load');
     onLoad();
   }
 }
