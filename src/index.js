@@ -14,11 +14,11 @@ const ref = {
 let page = 1;
 let value = null;
 const per_page = 40;
-const throttleScroll = throttle(onInfinityScroll, 500);
+const throttleScroll = throttle(onInfinityScroll, 700);
 
 ref.form.addEventListener('submit', onSearch);
 // ref.load.addEventListener('click', onLoad);
-window.addEventListener('scroll', throttleScroll);
+// window.addEventListener('scroll', throttleScroll);
 
 async function onSearch(e) {
   e.preventDefault();
@@ -29,7 +29,6 @@ async function onSearch(e) {
   const res = await await getPhoto(value, page, per_page);
   const picturesArr = res.data.hits;
   const totalHits = res.data.totalHits;
-  window.addEventListener('scroll', throttleScroll);
 
   if (picturesArr.length > 0) {
     ref.load.classList.remove('visually-hidden');
@@ -40,6 +39,7 @@ async function onSearch(e) {
   }
 
   addMarkup(picturesArr);
+  window.addEventListener('scroll', throttleScroll);
 }
 
 async function onLoad() {
@@ -106,7 +106,9 @@ function lazyScroll() {
 }
 
 function onInfinityScroll(e) {
-  const documentRect = ref.body.getBoundingClientRect();
+  const documentRect = ref.gallery.lastElementChild.getBoundingClientRect();
+  console.log(documentRect.bottom);
+  console.log(document.documentElement.clientHeight + 20);
   if (documentRect.bottom < document.documentElement.clientHeight + 20) {
     onLoad();
   }
