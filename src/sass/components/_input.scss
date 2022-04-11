@@ -18,9 +18,13 @@
 
 .form-wrap {
   display: flex;
-  justify-content: center;
+  justify-content: end;
   align-items: center;
   height: 60px;
+
+  @media screen and (min-width: 768px) {
+    justify-content: center;
+  }
 }
 
 .search-form {
@@ -29,7 +33,7 @@
 
 .search-form__input {
   height: 40px;
-  width: 400px;
+  width: 100%;
   border-radius: 10px;
   border: 2px solid var(--primary-color);
   color: #0082d1;
@@ -42,6 +46,10 @@
   }
   &::placeholder {
     color: var(--secondary-color);
+  }
+
+  @media screen and (min-width: 768px) {
+    width: 400px;
   }
 }
 .search-form__submit {
