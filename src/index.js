@@ -107,8 +107,6 @@ function lazyScroll() {
 
 function onInfinityScroll(e) {
   const documentRect = ref.gallery.lastElementChild.getBoundingClientRect();
-  console.log(documentRect.bottom);
-  console.log(document.documentElement.clientHeight + 20);
   if (documentRect.bottom < document.documentElement.clientHeight + 20) {
     onLoad();
   }
